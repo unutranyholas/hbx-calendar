@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "hbxReact",
+    "style": "scss",
+    "postcss": true
+  }
+}

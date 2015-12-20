@@ -1,10 +1,16 @@
 require('normalize.css');
 require('styles/App.css');
-//require('taucharts/build/production/tauCharts.min.css');
+require('taucharts/build/production/tauCharts.min.css');
 
 import React from 'react';
 import d3 from 'd3';
-import * as tauCharts from 'taucharts/build/development/tauCharts';
+
+import * as tauCharts from 'tauCharts';
+import tooltip from 'tauCharts-tooltip';
+import legend from 'tauCharts-legend';
+import quickFilter from 'tauCharts-quick-filter';
+import trendline from 'tauCharts-trendline';
+
 import _ from 'lodash';
 import queue from 'queue-async';
 
@@ -37,6 +43,10 @@ class AppComponent extends React.Component {
       }))
       .await(function (error, calendar, courses, students) {
 
+        students = _.chain(students).sortBy(d => d['completiondate']).sortBy(d => d['student_id']).sortBy(d => d['course_number']).value();
+
+        console.log(students);
+
         students = d3.nest().key(d => d['course_number']).entries(students);
         courses = d3.nest().key(d => d['course_number']).entries(courses);
         calendar = d3.nest().key(d => d['course_number']).entries(calendar);
@@ -63,6 +73,30 @@ class AppComponent extends React.Component {
             return a
           });
           delete c.values;
+
+
+          console.log(c.actions);
+
+          c.actions = c.actions.reduce((prev, cur, i, array) => {
+
+
+            if (prev.length === 0) {
+              prev.push(cur);
+            } else if (_.last(prev).student_id !== cur.student_id ) {
+              prev.push(cur);
+            } else if (_.last(prev).progress <= cur.progress) {
+              prev.push(cur);
+            }
+
+            return prev
+
+          },[]);
+
+
+
+          console.log(c.actions);
+
+
           return c
         });
 
@@ -74,13 +108,13 @@ class AppComponent extends React.Component {
 
         let result = _.merge(students, courses, calendar);
 
-        self.drawChart(result[2]);
+        self.drawChart(result[1]);
 
       });
 
     return (
       <div>
-        <div ref="chart"></div>
+        <div ref="chart" className="chart"></div>
       </div>
     );
   }
@@ -97,8 +131,8 @@ class AppComponent extends React.Component {
       size: null,
       color: 'student_id',
       plugins: [
-        //tauCharts.api.plugins.get('tooltip')(),
-        //tauCharts.api.plugins.get('legend')(),
+        tauCharts.api.plugins.get('tooltip')(),
+        tauCharts.api.plugins.get('legend')(),
         //tauCharts.api.plugins.get('quick-filter')(),
         //tauCharts.api.plugins.get('trendline')(),
       ],
@@ -118,7 +152,6 @@ export default AppComponent;
 
 
 //TODO: filter inconsistent data (check progress)
-//TODO: connect plugins to webpack
 //TODO: draw modules
 //TODO: draw other layers with dots
 //TODO: course selector

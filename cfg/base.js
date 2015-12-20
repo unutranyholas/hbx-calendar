@@ -2,6 +2,10 @@ var path = require('path');
 var port = 8000;
 var srcPath = path.join(__dirname, '/../src');
 var publicPath = '/assets/';
+var toAbsolute = function (relativePath) {
+  return path.resolve(__dirname, relativePath);
+};
+
 module.exports = {
   port: port,
   debug: true,
@@ -25,6 +29,14 @@ module.exports = {
       '.jsx'
     ],
     alias: {
+      'tauCharts': toAbsolute('../node_modules/tauCharts/build/development/tauCharts'),
+      'tauCharts-tooltip': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.tooltip'),
+      'tauCharts-legend': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.legend'),
+      'tauCharts-trendline': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.trendline'),
+      'tauCharts-export': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.export'),
+      'tauCharts-quick-filter': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.quick-filter'),
+      'tauCharts-annotations': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.annotations'),
+
       actions: srcPath + '/actions/',
       components: srcPath + '/components/',
       sources: srcPath + '/sources/',

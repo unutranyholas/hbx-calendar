@@ -22,10 +22,10 @@ body {
 
 .chart {
   width: 1000px;
-  height: 600px;
+  height: 800px;
 }
 
-
+/*
 path, line {
   stroke: rgba(0, 0, 0, 0.2);
   stroke-width: 1px;
@@ -35,3 +35,4 @@ path, line {
 text {
   font-size: 12px;
 }
+*/

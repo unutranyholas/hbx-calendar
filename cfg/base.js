@@ -36,6 +36,7 @@ module.exports = {
       'tauCharts-export': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.export'),
       'tauCharts-quick-filter': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.quick-filter'),
       'tauCharts-annotations': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.annotations'),
+      'tauCharts-layers': toAbsolute('../node_modules/tauCharts/build/development/plugins/tauCharts.layers'),
 
       actions: srcPath + '/actions/',
       components: srcPath + '/components/',

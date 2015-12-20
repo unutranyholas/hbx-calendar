@@ -65,6 +65,11 @@
   },
   "dependencies": {
     "core-js": "^1.2.6",
+    "d3-color": "^0.3.2",
+    "d3-format": "^0.4.1",
+    "d3-scale": "^0.3.0",
+    "d3-shape": "^0.2.2",
+    "d3-time": "^0.1.1",
     "lodash": "^3.10.1",
     "normalize.css": "^3.0.3",
     "queue-async": "^1.0.7",

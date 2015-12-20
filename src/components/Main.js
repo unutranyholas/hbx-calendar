@@ -10,6 +10,7 @@ import tooltip from 'tauCharts-tooltip';
 import legend from 'tauCharts-legend';
 import quickFilter from 'tauCharts-quick-filter';
 import trendline from 'tauCharts-trendline';
+import annotations from 'tauCharts-annotations';
 
 import _ from 'lodash';
 import queue from 'queue-async';
@@ -45,8 +46,6 @@ class AppComponent extends React.Component {
 
         students = _.chain(students).sortBy(d => d['completiondate']).sortBy(d => d['student_id']).sortBy(d => d['course_number']).value();
 
-        console.log(students);
-
         students = d3.nest().key(d => d['course_number']).entries(students);
         courses = d3.nest().key(d => d['course_number']).entries(courses);
         calendar = d3.nest().key(d => d['course_number']).entries(calendar);
@@ -74,11 +73,7 @@ class AppComponent extends React.Component {
           });
           delete c.values;
 
-
-          console.log(c.actions);
-
           c.actions = c.actions.reduce((prev, cur, i, array) => {
-
 
             if (prev.length === 0) {
               prev.push(cur);
@@ -87,15 +82,9 @@ class AppComponent extends React.Component {
             } else if (_.last(prev).progress <= cur.progress) {
               prev.push(cur);
             }
-
             return prev
 
           },[]);
-
-
-
-          console.log(c.actions);
-
 
           return c
         });
@@ -108,7 +97,7 @@ class AppComponent extends React.Component {
 
         let result = _.merge(students, courses, calendar);
 
-        self.drawChart(result[1]);
+        self.drawChart(result[2]);
 
       });
 
@@ -120,8 +109,26 @@ class AppComponent extends React.Component {
   }
 
   drawChart(data) {
-    console.log(data);
-    console.log(this.refs.chart);
+    let test = [(new Date(data.modules[0].release_date)).getTime(), (new Date(data.modules[0].due_date)).getTime()];
+    console.log(test);
+
+    let dateItems = data.modules.map((m, i) => {
+      return {
+        dim: 'completiondate',
+        val: [new Date(data.modules[i].release_date), new Date(data.modules[i].due_date)],
+        text: 'Module #' + m.module_number
+      }
+    });
+
+    let progressItems = (d3.nest().key(d => d['module_number']).entries(data.tasks)).map((m, i) => {
+      return {
+        dim: 'progress',
+        val: _.last(m.values).progress,
+        text: 'Module #' + m.key
+      }
+    });
+
+    console.log(dateItems, progressItems);
 
     var chart = new tauCharts.Chart({
       data: data.actions,
@@ -135,6 +142,9 @@ class AppComponent extends React.Component {
         tauCharts.api.plugins.get('legend')(),
         //tauCharts.api.plugins.get('quick-filter')(),
         //tauCharts.api.plugins.get('trendline')(),
+        tauCharts.api.plugins.get('annotations')({
+          items: dateItems.concat(progressItems)
+        }),
       ],
       guide: {
         showGridLines: 'none',
@@ -151,7 +161,6 @@ AppComponent.defaultProps = {
 export default AppComponent;
 
 
-//TODO: filter inconsistent data (check progress)
 //TODO: draw modules
 //TODO: draw other layers with dots
 //TODO: course selector

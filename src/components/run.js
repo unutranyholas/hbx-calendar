@@ -74,16 +74,18 @@ queue()
       return c
     });
 
-    calendar = calendar.map(c => {
-      c.modules = c.values.map(m => {
+    calendar = calendar.map((c, n) => {
+      c.modules = c.values.map((m, i) => {
         m.release_date = (new Date(m.release_date)).setHours(0, 0, 0);
         m.due_date = (new Date(m.due_date)).setHours(23, 59, 59);
+        m.progress_start = (i === 0) ? 0 : _.last(courses[n].tasks[i - 1].values).progress;
+        m.progress_finish = _.last(courses[n].tasks[i].values).progress;
         return m
       });
       delete c.values;
       return c
     });
 
-    ReactDOM.render(<App data={_.merge(students, courses, calendar)} />, document.getElementById('app'));
+    ReactDOM.render(<App data={_.merge(students, calendar)} />, document.getElementById('app'));
 
   });

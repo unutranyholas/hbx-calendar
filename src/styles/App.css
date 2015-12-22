@@ -25,6 +25,10 @@ body {
   height: 400px;
 }
 
+rect {
+  fill: rgba(200, 0, 0, 0.5)
+}
+
 /*
 path, line {
   stroke: rgba(0, 0, 0, 0.2);

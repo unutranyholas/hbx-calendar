@@ -6,14 +6,7 @@ import React from 'react';
 import d3 from 'd3';
 import _ from 'lodash';
 
-//import * as tauCharts from 'tauCharts';
-//import tooltip from 'tauCharts-tooltip';
-//import legend from 'tauCharts-legend';
-//import quickFilter from 'tauCharts-quick-filter';
-//import trendline from 'tauCharts-trendline';
-//import annotations from 'tauCharts-annotations';
-//import layers from 'tauCharts-layers';
-
+import { linear, time } from 'd3-scale';
 
 
 class AppComponent extends React.Component {
@@ -25,7 +18,7 @@ class AppComponent extends React.Component {
       student_id: 1,
       date: _.last(props.data[0].modules).due_date
     }
-    
+
   }
   render() {
 
@@ -35,7 +28,6 @@ class AppComponent extends React.Component {
         return s
       }),
       modules: this.props.data[this.state.course_number - 1].modules,
-      tasks: this.props.data[this.state.course_number - 1].tasks,
 
       student_id: this.state.student_id,
       width: 1000,
@@ -58,14 +50,49 @@ class AppComponent extends React.Component {
 }
 
 class Chart extends React.Component {
-  render() {
+  constructor(props) {
+    super(props);
 
-    console.log(this.props);
+    const {width, height, padding, modules} = this.props;
+
+    this.x = time()
+      .domain([modules[0].release_date, _.last(modules).due_date])
+      .range([0, width - padding.l - padding.r]);
+
+    this.y = linear()
+      .domain([1, 0])
+      .range([0, height - padding.t - padding.b]);
+  }
+
+
+  render() {
+    const {width, height, padding, modules} = this.props;
+    const {x, y} = this;
+
+    console.log(modules);
+
+    let moduleRects = modules.map((m, i) => {
+
+      return (
+        <rect key={i}
+              x={x(m.release_date)}
+              y={y(m.progress_finish)}
+              width={x(m.due_date) - x(m.release_date)}
+              height={y(m.progress_start) - y(m.progress_finish)}
+        />
+      )
+    });
 
     return (
       <div>
         <h1>{this.props.modules[0].course}</h1>
-        <div ref="chart" className="chart">{JSON.stringify(this.props.data)}</div>
+        <div ref="chart" className="chart">
+          <svg width={width} height={height}>
+            <g className="modules" transform={'translate(' + padding.t + ',' + padding.l + ')'}>
+              {moduleRects}
+            </g>
+          </svg>
+        </div>
       </div>
     );
   }

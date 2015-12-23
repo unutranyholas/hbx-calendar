@@ -7,6 +7,7 @@ import d3 from 'd3';
 import _ from 'lodash';
 
 import { linear, time } from 'd3-scale';
+import { line } from 'd3-shape';
 
 
 class AppComponent extends React.Component {
@@ -14,30 +15,42 @@ class AppComponent extends React.Component {
     super(props);
 
     this.state = {
-      course_number: 1,
-      student_id: 1,
-      date: _.last(props.data[0].modules).due_date
+      course_number: 3,
+      student_id: 13,
+      date: _.last(props.data[0].modules).due_date,
+      assumption: 'te'
     }
 
   }
   render() {
 
     const chartProps = {
-      actions: this.props.data[this.state.course_number - 1].actions.map(s => {
-        s.values = s.values.filter(a => a.completiondate < new Date(this.state.date));
-        return s
+      actions: _.chain(this.props.data[this.state.course_number - 1].actions).map(student => {
+        student.isMe = (+student.key) === this.state.student_id;
+        student.values = student.values
+          .filter(a => a.completiondate < new Date(this.state.date))
+          .map(a => {
+            a.progress = a.progress[this.state.assumption];
+            return a;
+          });
+        return student
+      }).sortBy(student => student.isMe).value(),
+
+      modules: this.props.data[this.state.course_number - 1].modules.map(m => {
+          m.progress_start = m.progress_start[this.state.assumption];
+          m.progress_finish = m.progress_finish[this.state.assumption];
+         return m;
       }),
-      modules: this.props.data[this.state.course_number - 1].modules,
 
       student_id: this.state.student_id,
       width: 1000,
       height: 400,
       padding: {
-        l: 30,
-        b: 30,
+        l: 90,
+        b: 40,
         t: 30,
         r: 30
-      }
+      },
     };
 
     return (
@@ -62,17 +75,70 @@ class Chart extends React.Component {
     this.y = linear()
       .domain([1, 0])
       .range([0, height - padding.t - padding.b]);
+
+    this.getLinePath = this.getLinePath.bind(this);
+  }
+
+  getLinePath(values) {
+    const {x, y} = this;
+    return line()(values.map(d => [x(d.completiondate), y(d.progress)]));
   }
 
 
   render() {
-    const {width, height, padding, modules} = this.props;
+    const {width, height, padding, modules, actions} = this.props;
     const {x, y} = this;
+    const tickSize = 8;
+    const labelPadding = 4;
+    const dateFormat = x.tickFormat('%b %d');
+    const numFormat = y.tickFormat(5, "%");
+    const dotRadius = 3;
 
-    console.log(modules);
+    const xTicks = x.ticks().map((t, i) => {
+      const x1 = x(t);
+      const x2 = x(t);
+      const y1 = y.range()[1];
+      const y2 = y.range()[1] + tickSize;
+      const text = dateFormat(t);
 
-    let moduleRects = modules.map((m, i) => {
+      return (
+        <g key={i}>
+          <line y1={y1} y2={y2} x1={x1} x2={x2} />
+          <text x={x2} y={y2} dy={tickSize + labelPadding}>{text}</text>
+        </g>
+      )
+    });
 
+    const yTicks = y.ticks().map((t, i) => {
+      const x1 = y.range()[0];
+      const x2 = y.range()[0] - tickSize;
+      const y1 = y(t);
+      const y2 = y(t);
+      const text = numFormat(t);
+
+      return (
+        <g key={i}>
+          <line y1={y1} y2={y2} x1={x1} x2={x2} />
+          <text x={x2} y={y2} dx={-labelPadding} dy={labelPadding}>{text}</text>
+        </g>
+      )
+    });
+
+    const xAxis = (
+      <g className="xAxis">
+        <line y1={y.range()[1]} y2={y.range()[1]} x1={x.range()[0]} x2={x.range()[1]} />
+        {xTicks}
+      </g>
+    );
+
+    const yAxis = (
+      <g className="yAxis">
+        <line y1={y.range()[1]} y2={y.range()[0]} x1={x.range()[0]} x2={x.range()[0]} />
+        {yTicks}
+      </g>
+    );
+
+    const moduleRects = modules.map((m, i) => {
       return (
         <rect key={i}
               x={x(m.release_date)}
@@ -83,13 +149,34 @@ class Chart extends React.Component {
       )
     });
 
+    const studentLines = actions.map((s, i) => {
+      const className = s.isMe ? 'active' : null;
+      const cx = x(_.last(s.values).completiondate);
+      const cy = y(_.last(s.values).progress);
+      return (
+        <g className={className}>
+          <circle r={dotRadius} cx={cx} cy={cy} />
+          <path key={i} d={this.getLinePath(s.values)} />
+        </g>
+      )
+    });
+
+    const translate = 'translate(' + padding.l + ',' + padding.t + ')';
+
     return (
       <div>
         <h1>{this.props.modules[0].course}</h1>
         <div ref="chart" className="chart">
           <svg width={width} height={height}>
-            <g className="modules" transform={'translate(' + padding.t + ',' + padding.l + ')'}>
+            <g className="axes" transform={translate}>
+              {xAxis}
+              {yAxis}
+            </g>
+            <g className="modules" transform={translate}>
               {moduleRects}
+            </g>
+            <g className="students" transform={translate}>
+              {studentLines}
             </g>
           </svg>
         </div>
@@ -100,8 +187,6 @@ class Chart extends React.Component {
 
 class Selector extends React.Component {
   render() {
-
-    console.log(this.props);
 
     return (
       <div>

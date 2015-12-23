@@ -33,7 +33,10 @@ queue()
 
     courses = courses.map(c => {
       c.tasks = c.values.map((t, i) => {
-        t.progress = (i + 1) / c.values.length;
+        t.progress = {};
+        t.progress.te = (i + 1) / c.values.length;
+        t.progress.mod = 0;
+        t.progress.dur = 0;
         return t
       });
 
@@ -62,7 +65,7 @@ queue()
           prev.push(cur);
         } else if (_.last(prev).student_id !== cur.student_id ) {
           prev.push(cur);
-        } else if (_.last(prev).progress <= cur.progress) {
+        } else if (_.last(prev).progress.te <= cur.progress.te) {
           prev.push(cur);
         }
         return prev
@@ -78,7 +81,7 @@ queue()
       c.modules = c.values.map((m, i) => {
         m.release_date = (new Date(m.release_date)).setHours(0, 0, 0);
         m.due_date = (new Date(m.due_date)).setHours(23, 59, 59);
-        m.progress_start = (i === 0) ? 0 : _.last(courses[n].tasks[i - 1].values).progress;
+        m.progress_start = (i === 0) ? {te: 0, mod: 0, dur: 0} : _.last(courses[n].tasks[i - 1].values).progress;
         m.progress_finish = _.last(courses[n].tasks[i].values).progress;
         return m
       });

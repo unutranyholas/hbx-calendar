@@ -4,30 +4,48 @@ body {
   background: #fff;
 }
 
-.index img {
-  margin: 40px auto;
-  border-radius: 4px;
-  background: #fff;
-  display: block;
-}
-
-.index .notice {
-  margin: 20px auto;
-  padding: 15px 0;
-  text-align: center;
-  border: 1px solid #000;
-  border-width: 1px 0;
-  background: #666;
-}
-
 .chart {
   width: 1200px;
   height: 400px;
 }
 
 rect {
-  fill: rgba(200, 0, 0, 0.5)
+  fill: rgba(200, 0, 0, 0.2)
 }
+
+path, line {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.2);
+  stroke-width: 1px;
+}
+
+circle {
+  fill: rgba(0, 0, 0, 0.5);
+}
+
+.active path {
+  stroke: rgba(200, 0, 0, 1);
+  stroke-width: 2px;
+}
+
+.active circle {
+  stroke: rgba(200, 0, 0, 1);
+  stroke-width: 3px;
+  fill: rgba(200, 0, 0, 1);
+}
+
+text {
+  font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.xAxis text {
+  text-anchor: middle;
+}
+
+.yAxis text {
+  text-anchor: end;
+}
+
 
 /*
 path, line {

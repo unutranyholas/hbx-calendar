@@ -3,7 +3,6 @@ require('styles/App.css');
 require('taucharts/build/production/tauCharts.min.css');
 
 import React from 'react';
-import d3 from 'd3';
 import _ from 'lodash';
 
 import { linear, time } from 'd3-scale';
@@ -16,16 +15,20 @@ class AppComponent extends React.Component {
 
     this.state = {
       course_number: 3,
-      student_id: 13,
-      date: _.last(props.data[0].modules).due_date,
+      student_id: 1,
+      date: props.data[0].modules[0].due_date,
       assumption: 'te'
-    }
-
+    };
+    this.changeState = this.changeState.bind(this);
   }
-  render() {
 
+  changeState(newValue) {
+    this.setState(newValue);
+  }
+
+  render() {
     const chartProps = {
-      actions: _.chain(this.props.data[this.state.course_number - 1].actions).map(student => {
+      actions: _.chain(this.props.data[this.state.course_number - 1].actions).cloneDeep().map(student => {
         student.isMe = (+student.key) === this.state.student_id;
         student.values = student.values
           .filter(a => a.completiondate < new Date(this.state.date))
@@ -36,11 +39,11 @@ class AppComponent extends React.Component {
         return student
       }).sortBy(student => student.isMe).value(),
 
-      modules: this.props.data[this.state.course_number - 1].modules.map(m => {
+      modules: _.chain(this.props.data[this.state.course_number - 1].modules).cloneDeep().map(m => {
           m.progress_start = m.progress_start[this.state.assumption];
           m.progress_finish = m.progress_finish[this.state.assumption];
          return m;
-      }),
+      }).value(),
 
       student_id: this.state.student_id,
       width: 1000,
@@ -50,12 +53,24 @@ class AppComponent extends React.Component {
         b: 40,
         t: 30,
         r: 30
-      },
+      }
+    };
+
+    const selectorProps = {
+      changeState: this.changeState,
+      students: chartProps.actions.map(s => s.key),
+      dates: [chartProps.modules[0].release_date, _.last(chartProps.modules).due_date],
+      courses: this.props.data.map(c => {return {n: c.key, name: c.modules[0].course}}),
+      assumptions: _.keys(this.props.data[0].modules[0].progress_start),
+      student_id: this.state.student_id,
+      course_number: this.state.course_number,
+      date: this.state.date,
+      assumption: this.state.assumption
     };
 
     return (
       <div>
-        <Selector />
+        <Selector {...selectorProps} />
         <Chart {...chartProps} />
       </div>
     );
@@ -66,7 +81,7 @@ class Chart extends React.Component {
   constructor(props) {
     super(props);
 
-    const {width, height, padding, modules} = this.props;
+    const {width, height, padding, modules} = props;
 
     this.x = time()
       .domain([modules[0].release_date, _.last(modules).due_date])
@@ -84,14 +99,13 @@ class Chart extends React.Component {
     return line()(values.map(d => [x(d.completiondate), y(d.progress)]));
   }
 
-
   render() {
     const {width, height, padding, modules, actions} = this.props;
     const {x, y} = this;
     const tickSize = 8;
     const labelPadding = 4;
     const dateFormat = x.tickFormat('%b %d');
-    const numFormat = y.tickFormat(5, "%");
+    const numFormat = y.tickFormat(5, '%');
     const dotRadius = 3;
 
     const xTicks = x.ticks().map((t, i) => {
@@ -150,13 +164,15 @@ class Chart extends React.Component {
     });
 
     const studentLines = actions.map((s, i) => {
+      if (s.values.length === 0) {return null}
+
       const className = s.isMe ? 'active' : null;
       const cx = x(_.last(s.values).completiondate);
       const cy = y(_.last(s.values).progress);
       return (
-        <g className={className}>
+        <g className={className} key={i}>
           <circle r={dotRadius} cx={cx} cy={cy} />
-          <path key={i} d={this.getLinePath(s.values)} />
+          <path d={this.getLinePath(s.values)} />
         </g>
       )
     });
@@ -186,14 +202,32 @@ class Chart extends React.Component {
 }
 
 class Selector extends React.Component {
-  render() {
+  constructor(props) {
+    super(props)
 
+    this.state = {
+      student_id: this.props.student_id,
+      course_number: this.props.course_number,
+      date: this.props.date,
+      assumption: this.props.assumption
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
+  handleChange(e) {
+    this.setState({date: e.target.value});
+    this.props.changeState({date: +e.target.value});
+  }
+
+  render() {
+    const {changeState, students, dates, courses, assumptions} = this.props;
     return (
       <div>
-        123
+        <button onClick={() => this.props.changeState({student_id: 1})}>123</button>
+        <input type="range" min={dates[0]} max={dates[1]} value={this.state.date} onChange={this.handleChange} />
       </div>
     );
   }
+
 }
 
 

@@ -46,7 +46,7 @@ text {
   text-anchor: end;
 }
 
-
+input {width: 800px}
 /*
 path, line {
   stroke: rgba(0, 0, 0, 0.2);

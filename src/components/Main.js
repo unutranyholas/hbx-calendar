@@ -16,7 +16,7 @@ class AppComponent extends React.Component {
     this.state = {
       course_number: 3,
       student_id: 1,
-      date: props.data[0].modules[0].due_date,
+      date: props.data[0].modules[3].due_date,
       assumption: 'te'
     };
     this.changeState = this.changeState.bind(this);
@@ -28,23 +28,13 @@ class AppComponent extends React.Component {
 
   render() {
     const chartProps = {
-      actions: _.chain(this.props.data[this.state.course_number - 1].actions).cloneDeep().map(student => {
+      actions: _.chain(this.props.data[this.state.course_number - 1].actions).map(student => {
         student.isMe = (+student.key) === this.state.student_id;
-        student.values = student.values
-          .filter(a => a.completiondate < new Date(this.state.date))
-          .map(a => {
-            a.progress = a.progress[this.state.assumption];
-            return a;
-          });
+        student.history = student.values.filter(a => a.completiondate < new Date(this.state.date));
         return student
       }).sortBy(student => student.isMe).value(),
-
-      modules: _.chain(this.props.data[this.state.course_number - 1].modules).cloneDeep().map(m => {
-          m.progress_start = m.progress_start[this.state.assumption];
-          m.progress_finish = m.progress_finish[this.state.assumption];
-         return m;
-      }).value(),
-
+      modules: this.props.data[this.state.course_number - 1].modules,
+      assumption: this.state.assumption,
       student_id: this.state.student_id,
       width: 1000,
       height: 400,
@@ -96,11 +86,11 @@ class Chart extends React.Component {
 
   getLinePath(values) {
     const {x, y} = this;
-    return line()(values.map(d => [x(d.completiondate), y(d.progress)]));
+    return line()(values.map(d => [x(d.completiondate), y(d.progress[this.props.assumption])]));
   }
 
   render() {
-    const {width, height, padding, modules, actions} = this.props;
+    const {width, height, padding, modules, actions, assumption} = this.props;
     const {x, y} = this;
     const tickSize = 8;
     const labelPadding = 4;
@@ -156,23 +146,23 @@ class Chart extends React.Component {
       return (
         <rect key={i}
               x={x(m.release_date)}
-              y={y(m.progress_finish)}
+              y={y(m.progress_finish.te)}
               width={x(m.due_date) - x(m.release_date)}
-              height={y(m.progress_start) - y(m.progress_finish)}
+              height={y(m.progress_start[assumption]) - y(m.progress_finish[assumption])}
         />
       )
     });
 
     const studentLines = actions.map((s, i) => {
-      if (s.values.length === 0) {return null}
+      if (s.history.length === 0) {return null}
 
       const className = s.isMe ? 'active' : null;
-      const cx = x(_.last(s.values).completiondate);
-      const cy = y(_.last(s.values).progress);
+      const cx = x(_.last(s.history).completiondate);
+      const cy = y(_.last(s.history).progress[assumption]);
       return (
         <g className={className} key={i}>
           <circle r={dotRadius} cx={cx} cy={cy} />
-          <path d={this.getLinePath(s.values)} />
+          <path d={this.getLinePath(s.history)} />
         </g>
       )
     });

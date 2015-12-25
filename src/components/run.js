@@ -1,7 +1,7 @@
 import 'core-js/fn/object/assign';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './Main';
+import { App } from './';
 
 import _ from 'lodash';
 import d3 from 'd3';

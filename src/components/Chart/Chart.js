@@ -33,9 +33,12 @@ export default class Chart extends React.Component {
     const labelPadding = 4;
     const dateFormat = x.tickFormat('%b %d');
     const numFormat = y.tickFormat(5, '%');
-    const dotRadius = 3;
+    const dotRadius = 2.5;
 
     const now = ( <line y1={y.range()[0]} y2={y.range()[1]} x1={x(date)} x2={x(date)} /> );
+
+    const position = _.findIndex(actions, s => s.isMe);
+    const stats = ( <g><text x="0" y="0"><tspan>{position}</tspan><tspan> students are ahead you</tspan></text></g> ) ;
 
     const xTicks = x.ticks().map((t, i) => {
       const x1 = x(t);
@@ -92,7 +95,7 @@ export default class Chart extends React.Component {
       )
     });
 
-    const studentLines = actions.map((s, i) => {
+    const studentLines = _.sortBy(actions, s => s.isMe).map((s, i) => {
       if (s.history.length === 0) {return null}
 
       const className = s.isMe ? 'active' : null;
@@ -114,6 +117,9 @@ export default class Chart extends React.Component {
         <div ref="chart" className="chart">
           <svg width={width} height={height}>
             <g transform={translate}>
+              <g className="stats">
+                {stats}
+              </g>
               <g className="now">
                 {now}
               </g>
@@ -134,3 +140,15 @@ export default class Chart extends React.Component {
     );
   }
 }
+
+// TODO: set font to Roboto
+// TODO: fix X axis
+// TODO: fix Y axis
+// TODO: tune colors
+// TODO: code the rest of the page
+// TODO: add drag react component
+// TODO: stylize selectbox
+// TODO: test interactions
+// TODO: improve copyrighting
+// TODO: animations?
+

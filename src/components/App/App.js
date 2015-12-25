@@ -1,11 +1,11 @@
 import normalize from 'normalize.css'
-import styles from 'styles/App.css'
+import styles from './App.css'
 
 import React from 'react';
 import _ from 'lodash';
 
-import Chart from './Chart'
-import Selector from './Selector'
+import { Chart } from '../'
+import { Selector } from '../'
 
 
 class AppComponent extends React.Component {
@@ -31,7 +31,12 @@ class AppComponent extends React.Component {
         student.isMe = (+student.key) === this.state.student_id;
         student.history = student.values.filter(a => a.completiondate < new Date(this.state.date));
         return student
-      }).sortBy(student => student.isMe).value(),
+      }).sortBy(s => !s.isMe).sortBy(s => {
+        return (s.history.length !== 0) ? _.last(s.history).completiondate : 0
+      }).sortBy(s => {
+        return (s.history.length !== 0) ? -_.last(s.history).progress[this.state.assumption] : 0
+      }).value(),
+      //}).sortBy(student => student.isMe).value(),
       modules: this.props.data[this.state.course_number - 1].modules,
       assumption: this.state.assumption,
       student_id: this.state.student_id,

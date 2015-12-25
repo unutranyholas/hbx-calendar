@@ -26,12 +26,10 @@ export default class Selector extends React.Component {
     });
 
     const studentsList = students.map((s, i) => {
-      console.log(s);
       return (<option value={s} key={i}>{s}</option>)
     });
 
     const coursesList = courses.map((c, i) => {
-      console.log(c);
       return (<option value={c.n} key={i}>{c.name}</option>)
     });
 

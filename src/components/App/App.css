@@ -1,7 +1,13 @@
 /* Base Application Styles */
+
+$font-family: 'Roboto', Helvetica, Arial, sans-serif;
+$text-color: #000;
+$active-color: #A61630;
+
 body {
-  color: #000;
-  background: #fff;
+  color: $text-color;
+  background: #DEDFE4;
+  font: 300 16px $font-family;
 }
 
 .chart {
@@ -23,19 +29,20 @@ circle {
   fill: rgba(0, 0, 0, 0.5);
 }
 
-.active path {
-  stroke: rgba(200, 0, 0, 1);
-  stroke-width: 2px;
-}
-
-.active circle {
-  stroke: rgba(200, 0, 0, 1);
-  stroke-width: 3px;
-  fill: rgba(200, 0, 0, 1);
+.active {
+  path {
+    stroke: $active-color;
+    stroke-width: 3px;
+  }
+  circle {
+    stroke: $active-color;
+    stroke-width: 3px;
+    fill: $active-color;
+  }
 }
 
 text {
-  font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font: 300 13px $font-family;
 }
 
 .xAxis text {

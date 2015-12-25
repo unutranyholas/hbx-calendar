@@ -36,16 +36,15 @@ class AppComponent extends React.Component {
       }).sortBy(s => {
         return (s.history.length !== 0) ? -_.last(s.history).progress[this.state.assumption] : 0
       }).value(),
-      //}).sortBy(student => student.isMe).value(),
       modules: this.props.data[this.state.course_number - 1].modules,
       assumption: this.state.assumption,
       student_id: this.state.student_id,
       date: this.state.date,
       width: 1000,
-      height: 400,
+      height: 450,
       padding: {
         l: 90,
-        b: 40,
+        b: 60,
         t: 30,
         r: 30
       }
@@ -64,7 +63,7 @@ class AppComponent extends React.Component {
     };
 
     return (
-      <div>
+      <div className="app">
         <Selector {...selectorProps} />
         <Chart {...chartProps} />
       </div>

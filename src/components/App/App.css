@@ -1,67 +1,16 @@
-/* Base Application Styles */
-
-$font-family: 'Roboto', Helvetica, Arial, sans-serif;
-$text-color: #000;
-$active-color: #A61630;
+@import "../variables.css";
 
 body {
+  margin: 0;
+  padding: 0;
   color: $text-color;
   background: #DEDFE4;
-  font: 300 16px $font-family;
+  font: $regular $medium $font-family;
 }
 
-.chart {
-  width: 1200px;
-  height: 400px;
+.app {
+  margin: 50px auto;
+  max-width: 1000px;
 }
 
-rect {
-  fill: rgba(200, 0, 0, 0.2)
-}
-
-path, line {
-  fill: none;
-  stroke: rgba(0, 0, 0, 0.2);
-  stroke-width: 1px;
-}
-
-circle {
-  fill: rgba(0, 0, 0, 0.5);
-}
-
-.active {
-  path {
-    stroke: $active-color;
-    stroke-width: 3px;
-  }
-  circle {
-    stroke: $active-color;
-    stroke-width: 3px;
-    fill: $active-color;
-  }
-}
-
-text {
-  font: 300 13px $font-family;
-}
-
-.xAxis text {
-  text-anchor: middle;
-}
-
-.yAxis text {
-  text-anchor: end;
-}
-
-input {width: 800px}
-/*
-path, line {
-  stroke: rgba(0, 0, 0, 0.2);
-  stroke-width: 1px;
-  fill: none
-}
-
-text {
-  font-size: 12px;
-}
-*/
+input {width: 1000px}

@@ -1,0 +1,64 @@
+@import "../variables.css";
+
+.chart {
+  width: 1000px;
+  background-color: #fff;
+
+  rect {
+    fill: color($hidden-color a(20%));
+  }
+
+  rect.active {
+    fill: color($active-color a(20%));
+  }
+
+  path, line {
+    fill: none;
+    stroke: color($hidden-color a(40%));
+    stroke-width: 1px;
+  }
+
+  circle {
+    fill: color($hidden-color a(40%));
+  }
+
+  .now line {
+    stroke: $now;
+    stroke-width: 2px;
+  }
+
+  .active {
+    path {
+      stroke: $active-color;
+      stroke-width: 3px;
+    }
+    circle {
+      stroke: $active-color;
+      stroke-width: 3px;
+      fill: $active-color;
+    }
+  }
+
+  .actionsTicks line {
+    stroke: $active-color;
+    stroke-width: 1px;
+  }
+
+  text {
+    font: $regular $small $font-family;
+  }
+
+  .xAxis {
+    line {
+      stroke: $text-color;
+    }
+    text {
+      text-anchor: middle;
+    }
+  }
+
+  .yAxis text {
+    text-anchor: end;
+  }
+
+}

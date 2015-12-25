@@ -7,7 +7,6 @@ import _ from 'lodash';
 import d3 from 'd3';
 import queue from 'queue-async';
 
-//let data = require('file!../data/combined.json');
 let calendar = require('file!../data/calendar.csv');
 let courses = require('file!../data/course_data.csv');
 let students = require('file!../data/student_data.csv');

@@ -78,6 +78,9 @@ queue()
 
     calendar = calendar.map((c, n) => {
       c.modules = c.values.map((m, i) => {
+
+        m.course = m.course.replace(' September 2015 CORe September 2015', '');
+        m.course = m.course.replace(' Business Analytics Sept 2015 CORe September 2015', '');
         m.release_date = (new Date(m.release_date)).setHours(0, 0, 0);
         m.due_date = (new Date(m.due_date)).setHours(23, 59, 59);
         m.progress_start = (i === 0) ? {te: 0, mod: 0, dur: 0} : _.last(courses[n].tasks[i - 1].values).progress;

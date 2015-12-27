@@ -14,7 +14,7 @@ class AppComponent extends React.Component {
 
     this.state = {
       course_number: 3,
-      student_id: 1,
+      student_id: "1",
       date: props.data[0].modules[3].due_date,
       assumption: 'te'
     };
@@ -28,7 +28,7 @@ class AppComponent extends React.Component {
   render() {
     const chartProps = {
       actions: _.chain(this.props.data[this.state.course_number - 1].actions).map(student => {
-        student.isMe = (+student.key) === this.state.student_id;
+        student.isMe = (student.key) === this.state.student_id;
         student.history = student.values.filter(a => a.completiondate < new Date(this.state.date));
         return student
       }).sortBy(s => !s.isMe).sortBy(s => {
@@ -43,10 +43,10 @@ class AppComponent extends React.Component {
       width: 1000,
       height: 450,
       padding: {
-        l: 90,
+        l: 70,
         b: 60,
         t: 30,
-        r: 30
+        r: 50
       }
     };
 

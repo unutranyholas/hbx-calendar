@@ -81,6 +81,7 @@
     "queue-async": "^1.0.7",
     "react": "^0.14.0",
     "react-addons-test-utils": "^0.14.0",
-    "react-dom": "^0.14.0"
+    "react-dom": "^0.14.0",
+    "react-number-editor": "^4.0.1"
   }
 }

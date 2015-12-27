@@ -36,16 +36,9 @@ export default class Chart extends React.Component {
     const myActiveModule = (myActions.length === 0) ? '1' : _.last(myActions).module_number;
 
     const {x, y} = this;
-    const tickSize = 8;
     const xAxisHeight = 16;
-
     const dotRadius = 2.5;
-
-
     const now = ( <line y1={y.range()[0]} y2={y.range()[1]} x1={x(date)} x2={x(date)} /> );
-
-    //const position = _.findIndex(actions, s => s.isMe);
-    //const stats = ( <g><text x="0" y="0"><tspan>{position}</tspan><tspan> students are ahead you</tspan></text></g> ) ;
 
     const studentLines = _.sortBy(actions, s => s.isMe).map((s, i) => {
       if (s.history.length === 0) {return null}
@@ -62,12 +55,19 @@ export default class Chart extends React.Component {
     });
 
     const translate = 'translate(' + padding.l + ',' + padding.t + ')';
-
-    console.log(myActions);
+    const position = _.findIndex(actions, s => s.isMe);
 
     return (
-      <div>
-        <h1>{this.props.modules[0].course}</h1>
+      <div className="window">
+        <header><div className="logo" /><h2>{this.props.modules[0].course}</h2><div className="icons" /></header>
+        <div className="info">
+          <h1>My Progress</h1>
+          <ul>
+            <li>You completed <b>7 of 24</b><br />lessons in Module 4</li>
+            <li>But you have another<br /><b>2d 12h</b> to finish it.</li>
+            <li>By the way, <b>{position}</b> students<br />are ahead you.</li>
+          </ul>
+        </div>
         <div ref="chart" className="chart">
           <svg width={width} height={height}>
             <g transform={translate}>
@@ -127,6 +127,7 @@ class YAxis extends React.Component {
     return (
       <g className="yTicks">
         {yTicks}
+        <text x={x2} y={y(1) - 20} dx={labelPadding + 8} className="label">Module #</text>
         <g className="current">
           <text x={x1} y={yCur} dx={-labelPadding} dy={labelPadding / 2} className="progress">{textCur}</text>
           <line y1={yCur} y2={yCur} x1={x1} x2={x1 - tickSize} />
@@ -215,10 +216,10 @@ class Modules extends React.Component {
 // fix Y axis
 // TODO: tune colors
 
-// TODO: code the rest of the page
-// TODO: add drag react component
-// TODO: stylize selectbox
-// TODO: test interactions
+// code the rest of the page
+// add drag react component
+// stylize selectbox
+// TODO: test interactions ???
 // TODO: improve copyrighting
 // TODO: animations?
 

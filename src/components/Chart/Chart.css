@@ -2,7 +2,6 @@
 
 .chart {
   width: 1000px;
-  background-color: #fff;
 
   text {
     font: $regular $small $font-family;
@@ -12,7 +11,6 @@
     rect {
       fill: color($modules-color a(20%));
     }
-
     rect.active {
       fill: color($active-color a(20%));
     }
@@ -66,7 +64,7 @@
         stroke: $active-color
       }
     }
-    text.progress {
+    text.progress, text.label {
       text-anchor: end;
     }
     text.num {

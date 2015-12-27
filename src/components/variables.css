@@ -1,4 +1,5 @@
 $font-family: 'Roboto', Helvetica, Arial, sans-serif;
+$bg-color: #fff;
 $text-color: #000;
 
 $active-color: #A61630;
@@ -7,7 +8,7 @@ $students-color: #999999;
 $now: #7ED321;
 
 $regular: 400;
-$bold: 600;
+$bold: 700;
 
 $small: 13px;
 $medium: 16px;

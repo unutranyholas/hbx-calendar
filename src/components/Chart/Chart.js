@@ -39,36 +39,13 @@ export default class Chart extends React.Component {
     const tickSize = 8;
     const xAxisHeight = 16;
 
-    const numFormat = y.tickFormat(5, '%');
     const dotRadius = 2.5;
-    const labelPadding = 4;
+
 
     const now = ( <line y1={y.range()[0]} y2={y.range()[1]} x1={x(date)} x2={x(date)} /> );
 
     //const position = _.findIndex(actions, s => s.isMe);
     //const stats = ( <g><text x="0" y="0"><tspan>{position}</tspan><tspan> students are ahead you</tspan></text></g> ) ;
-
-    const yTicks = y.ticks().map((t, i) => {
-      const x1 = y.range()[0];
-      const x2 = y.range()[0] - tickSize;
-      const y1 = y(t);
-      const y2 = y(t);
-      const text = numFormat(t);
-
-      return (
-        <g key={i}>
-          <line y1={y1} y2={y2} x1={x1} x2={x2} />
-          <text x={x2} y={y2} dx={-labelPadding} dy={labelPadding}>{text}</text>
-        </g>
-      )
-    });
-
-    const yAxis = (
-      <g className="yAxis">
-        <line y1={y.range()[1]} y2={y.range()[0]} x1={x.range()[0]} x2={x.range()[0]} />
-        {yTicks}
-      </g>
-    );
 
     const studentLines = _.sortBy(actions, s => s.isMe).map((s, i) => {
       if (s.history.length === 0) {return null}
@@ -86,6 +63,8 @@ export default class Chart extends React.Component {
 
     const translate = 'translate(' + padding.l + ',' + padding.t + ')';
 
+    console.log(myActions);
+
     return (
       <div>
         <h1>{this.props.modules[0].course}</h1>
@@ -96,15 +75,15 @@ export default class Chart extends React.Component {
                 {now}
               </g>
               <g className="axes">
-                {yAxis}
-                <g className="x-axis" transform="translate(0, 10)">
-                  <XAxis x={x} y={{y: y.range()[1], height: xAxisHeight}} actions={myActions} />
+                <g  className="yAxis">
+                  <YAxis x={x.range()} y={y} progress={(myActions.length) ? _.last(myActions).progress[assumption] : 0} modules={[0].concat(modules.map(m => m.progress_finish[assumption]))} />
+                </g>
+                <g className="xAxis" transform="translate(0, 10)">
                   <Modules x={x} y={{y: y.range()[1], height: xAxisHeight}} activeModule={myActiveModule} modules={modules} assumption={assumption} />
+                  <XAxis x={x} y={{y: y.range()[1], height: xAxisHeight}} actions={myActions} />
                 </g>
               </g>
-              <g className="modules">
-                <Modules x={x} y={y} activeModule={myActiveModule} modules={modules} assumption={assumption} />
-              </g>
+              <Modules x={x} y={y} activeModule={myActiveModule} modules={modules} assumption={assumption} />
               <g className="students">
                 {studentLines}
               </g>
@@ -113,6 +92,47 @@ export default class Chart extends React.Component {
         </div>
       </div>
     );
+  }
+}
+
+class YAxis extends React.Component {
+  render() {
+
+    const {x, y, progress, modules} = this.props;
+    const tickSize = 8;
+    const numFormat = y.tickFormat(5, '%');
+    const labelPadding = 8;
+    const x1 = x[0];
+    const x2 = x[1];
+
+    const yTicks = modules.map((t, i) => {
+      const y1 = y(t);
+      const y2 = y(t);
+      const text = numFormat(t);
+
+      const num = (i) ? (<text x={x2} y={y2} dx={labelPadding} dy={labelPadding / 2} className="num">{i}</text>) : null;
+
+      return (
+        <g key={i}>
+          <text x={x1} y={y1} dx={-labelPadding} dy={labelPadding / 2} className="progress">{text}</text>
+          <line y1={y1} y2={y2} x1={x1} x2={x2} />
+          {num}
+        </g>
+      )
+    });
+
+    const yCur = y(progress);
+    const textCur = numFormat(progress);
+
+    return (
+      <g className="yTicks">
+        {yTicks}
+        <g className="current">
+          <text x={x1} y={yCur} dx={-labelPadding} dy={labelPadding / 2} className="progress">{textCur}</text>
+          <line y1={yCur} y2={yCur} x1={x1} x2={x1 - tickSize} />
+        </g>
+      </g>
+    )
   }
 }
 
@@ -191,9 +211,10 @@ class Modules extends React.Component {
 }
 
 // set font to Roboto
-// TODO: fix X axis
-// TODO: fix Y axis
+// fix X axis
+// fix Y axis
 // TODO: tune colors
+
 // TODO: code the rest of the page
 // TODO: add drag react component
 // TODO: stylize selectbox

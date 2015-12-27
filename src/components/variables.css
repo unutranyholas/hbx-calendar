@@ -2,7 +2,8 @@ $font-family: 'Roboto', Helvetica, Arial, sans-serif;
 $text-color: #000;
 
 $active-color: #A61630;
-$hidden-color: #A5A6C0;
+$modules-color: #A5A6C0;
+$students-color: #999999;
 $now: #7ED321;
 
 $regular: 400;

@@ -4,38 +4,73 @@
   width: 1000px;
   background-color: #fff;
 
-  rect {
-    fill: color($hidden-color a(20%));
+  text {
+    font: $regular $small $font-family;
   }
 
-  rect.active {
-    fill: color($active-color a(20%));
+  .modules {
+    rect {
+      fill: color($modules-color a(20%));
+    }
+
+    rect.active {
+      fill: color($active-color a(20%));
+    }
   }
 
-  path, line {
-    fill: none;
-    stroke: color($hidden-color a(40%));
-    stroke-width: 1px;
-  }
-
-  circle {
-    fill: color($hidden-color a(40%));
-  }
-
-  .now line {
-    stroke: $now;
-    stroke-width: 2px;
-  }
-
-  .active {
+  .students {
     path {
-      stroke: $active-color;
-      stroke-width: 3px;
+      fill: none;
+      stroke: color($students-color a(50%));
+      stroke-width: 1px;
     }
     circle {
-      stroke: $active-color;
-      stroke-width: 3px;
-      fill: $active-color;
+      fill: color($students-color a(50%));
+    }
+
+    .active {
+      path {
+        stroke: $active-color;
+        stroke-width: 3px;
+      }
+      circle {
+        stroke: $active-color;
+        stroke-width: 3px;
+        fill: $active-color;
+      }
+    }
+  }
+
+  .xTicks {
+    line {
+      fill: none;
+      stroke: $text-color;
+      stroke-width: 1px;
+    }
+    text {
+      text-anchor: middle;
+    }
+  }
+
+  .yTicks {
+    line {
+      fill: none;
+      stroke: color($text-color a(10%));
+      stroke-width: 1px;
+    }
+    .current {
+      text {
+        fill: $active-color
+      }
+      line {
+        stroke: $active-color
+      }
+    }
+    text.progress {
+      text-anchor: end;
+    }
+    text.num {
+      text-anchor: start;
     }
   }
 
@@ -44,21 +79,9 @@
     stroke-width: 1px;
   }
 
-  text {
-    font: $regular $small $font-family;
-  }
-
-  .xAxis {
-    line {
-      stroke: $text-color;
-    }
-    text {
-      text-anchor: middle;
-    }
-  }
-
-  .yAxis text {
-    text-anchor: end;
+  .now line {
+    stroke: $now;
+    stroke-width: 2px;
   }
 
 }

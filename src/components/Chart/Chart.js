@@ -219,6 +219,7 @@ class Modules extends React.Component {
 // code the rest of the page
 // add drag react component
 // stylize selectbox
+// count assumptions
 // TODO: test interactions ???
 // TODO: improve copyrighting
 // TODO: animations?

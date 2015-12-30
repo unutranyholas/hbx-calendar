@@ -30,14 +30,42 @@ queue()
     courses = d3.nest().key(d => d['course_number']).entries(courses);
     calendar = d3.nest().key(d => d['course_number']).entries(calendar);
 
-    courses = courses.map(c => {
+    const moduleStats = calendar.map((course, i) => {
+      const modules = course.values.map(module => {
+        return {
+          duration: (new Date(module.due_date)).setHours(23, 59, 59) - (new Date(module.release_date)).setHours(0, 0, 0),
+          te_count: courses[i].values.filter(d => d.module_number === module.module_number).length,
+          mod: 1,
+        }
+      });
+      return {
+        modules,
+        total_duration: _.sum(modules, m => m.duration),
+        total_te_count: courses[i].values.length,
+        total_mod: modules.length
+      }
+    });
+
+    courses = courses.map((c, j) => {
       c.tasks = c.values.map((t, i) => {
-        t.progress = {};
-        t.progress.te = (i + 1) / c.values.length;
-        t.progress.mod = 0;
-        t.progress.dur = 0;
+
+        const prevModulesStats = (t.module_number !== '1') ? {
+          duration: _.sum(moduleStats[j].modules.filter((d, i) => i < (t.module_number - 1)), d => d.duration),
+          te_count: _.sum(moduleStats[j].modules.filter((d, i) => i < (t.module_number - 1)), d => d.te_count),
+          mod: _.sum(moduleStats[j].modules.filter((d, i) => i < (t.module_number - 1)), d => d.mod)
+        } : {duration: 0, te_count: 0, mod: 0};
+        const curModuleStats = moduleStats[j].modules[t.module_number - 1];
+
+        t.progress = {
+          te: (prevModulesStats.te_count + (i + 1 - prevModulesStats.te_count)) / moduleStats[j].total_te_count,
+          mod: (prevModulesStats.mod + (i + 1 - prevModulesStats.te_count) / curModuleStats.te_count * curModuleStats.mod) / moduleStats[j].total_mod,
+          dur: (prevModulesStats.duration + (i + 1 - prevModulesStats.te_count) / curModuleStats.te_count * curModuleStats.duration) / moduleStats[j].total_duration
+        };
+
         return t
       });
+
+
 
       c.tasks = d3.nest().key(d => d['module_number']).entries(c.tasks);
 
@@ -83,6 +111,7 @@ queue()
         m.course = m.course.replace(' Business Analytics Sept 2015 CORe September 2015', '');
         m.release_date = (new Date(m.release_date)).setHours(0, 0, 0);
         m.due_date = (new Date(m.due_date)).setHours(23, 59, 59);
+        //m.duration = m.due_date - m.release_date;
         m.progress_start = (i === 0) ? {te: 0, mod: 0, dur: 0} : _.last(courses[n].tasks[i - 1].values).progress;
         m.progress_finish = _.last(courses[n].tasks[i].values).progress;
         return m

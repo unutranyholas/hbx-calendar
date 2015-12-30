@@ -14,15 +14,19 @@ class AppComponent extends React.Component {
 
     this.state = {
       course_number: 3,
-      student_id: "1",
+      student_id: '1',
       date: props.data[0].modules[3].due_date,
-      assumption: 'te'
+      assumption: 'mod'
     };
     this.changeState = this.changeState.bind(this);
   }
 
   changeState(newValue) {
+    console.log(newValue);
+
     this.setState(newValue);
+
+    console.log(this.state);
   }
 
   render() {

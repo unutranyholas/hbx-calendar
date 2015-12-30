@@ -23,7 +23,7 @@ export default class Selector extends React.Component {
 
   onSelectChange(e) {
     this.setState({[e.target.dataset.field]: e.target.value});
-    this.props.changeState({[e.target.dataset.field]: +e.target.value});
+    this.props.changeState({[e.target.dataset.field]: e.target.value});
   }
 
   onDateChange(e){

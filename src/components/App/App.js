@@ -22,11 +22,7 @@ class AppComponent extends React.Component {
   }
 
   changeState(newValue) {
-    console.log(newValue);
-
     this.setState(newValue);
-
-    console.log(this.state);
   }
 
   render() {

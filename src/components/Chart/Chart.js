@@ -26,7 +26,12 @@ export default class Chart extends React.Component {
 
   getLinePath(values) {
     const {x, y} = this;
-    return line()(values.map(d => [x(d.completiondate), y(d.progress[this.props.assumption])]));
+
+    const linePath = line()
+      .x(d => { return x(d.completiondate)})
+      .y(d => { return y(d.progress[this.props.assumption]) });
+
+    return linePath(values)
   }
 
   render() {

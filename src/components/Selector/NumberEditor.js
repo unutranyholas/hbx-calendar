@@ -162,7 +162,7 @@ var NumberEditor = (function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var cursor = 'ew-resize';
+            var cursor = 'col-resize';
             var readOnly = true;
             var value = this.props.value;
             if (this.state.startEditing) {

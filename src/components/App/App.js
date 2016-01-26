@@ -15,7 +15,7 @@ class AppComponent extends React.Component {
     this.state = {
       course_number: 3,
       student_id: '1',
-      date: props.data[0].modules[3].due_date,
+      date: props.data[2].last_action,
       assumption: 'mod'
     };
     this.changeState = this.changeState.bind(this);
@@ -26,6 +26,7 @@ class AppComponent extends React.Component {
   }
 
   render() {
+
     const chartProps = {
       actions: _.chain(this.props.data[this.state.course_number - 1].actions).map(student => {
         student.isMe = (student.key) === this.state.student_id;
@@ -53,7 +54,7 @@ class AppComponent extends React.Component {
     const selectorProps = {
       changeState: this.changeState,
       students: chartProps.actions.map(s => s.key).sort((a, b) => a - b),
-      dates: [chartProps.modules[0].release_date, _.last(chartProps.modules).due_date],
+      dates: [chartProps.modules[0].release_date, this.props.data[this.state.course_number - 1].last_action],
       courses: this.props.data.map(c => {return {n: c.key, name: c.modules[0].course}}),
       assumptions: _.keys(this.props.data[0].modules[0].progress_start),
       student_id: this.state.student_id,

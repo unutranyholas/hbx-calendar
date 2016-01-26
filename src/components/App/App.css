@@ -4,7 +4,6 @@ body {
   margin: 0;
   padding: 0;
   color: $text-color;
-  background: #DEDFE4;
   font: $regular $medium $font-family;
 }
 
@@ -21,13 +20,17 @@ body {
   .info {
     display: flex;
     align-items: center;
+
+    & b{
+      white-space: nowrap;
+    }
   }
 
   h1 {
     flex: 0 1 auto;
     font: $regular $big $font-family;
     margin: 0;
-    padding: 40px 90px 15px 70px;
+    padding: 40px 50px 15px 50px;
     white-space: nowrap;
   }
 
@@ -39,7 +42,9 @@ body {
     li {
       flex: 0 1 auto;
       list-style: none;
-      margin: 0 45px 0 0;
+      padding: 0;
+      margin: 0 20px 0 0;
+      max-width: 200px;
     }
   }
 
@@ -59,7 +64,7 @@ body {
     }
     h2 {
       flex: 1 1 auto;
-      font: $bold calc($small + 1px) $font-family;
+      font: $bold $small $font-family;
       text-transform: uppercase;
       color: $bg-color;
       margin: 0;

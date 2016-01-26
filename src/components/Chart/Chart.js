@@ -39,6 +39,16 @@ export default class Chart extends React.Component {
 
     const myActions = actions.filter(s => s.isMe)[0].history;
     const myActiveModule = (myActions.length === 0) ? '1' : _.last(myActions).module_number;
+    const myLastAction = _.last(myActions.filter(v => v.completiondate < date));
+
+    const myModuleProgress = (myLastAction) ? myLastAction.progress[assumption] - modules[myActiveModule - 1].progress_start[assumption] : 0;
+    const myActiveModuleTotal = modules[myActiveModule - 1].progress_finish[assumption] - modules[myActiveModule - 1].progress_start[assumption];
+
+    const percentage = (myModuleProgress / myActiveModuleTotal * 100);
+
+    const timeRemain = Math.max(0, (percentage !== 100) ? modules[myActiveModule - 1].due_date - date : modules[myActiveModule].due_date - date);
+    const daysRemain = Math.floor(timeRemain / (1000 * 60 * 60 * 24));
+    const hoursRemain = Math.floor((timeRemain - daysRemain * 1000 * 60 * 60 * 24) / (1000 * 60 * 60));
 
     const {x, y} = this;
     const xAxisHeight = 16;
@@ -62,15 +72,19 @@ export default class Chart extends React.Component {
     const translate = 'translate(' + padding.l + ',' + padding.t + ')';
     const position = _.findIndex(actions, s => s.isMe);
 
+    const positionMessage = (position === 0) ? (<li>There are no students ahead you. Good pace!</li>) : (<li>By the way, <b>{position} students</b> are ahead you.</li>);
+    const progressMessage = (percentage === 100) ? (<li>You completed <b>Module {myActiveModule}</b>. Let's start the next one!</li>) : (<li>You completed only <b>{percentage.toFixed()}</b>% of&nbsp;<b>Module {myActiveModule}</b></li>);
+    const timeMessage = (percentage !== 100) ? (<li>But you have another <b>{daysRemain}d {hoursRemain}h</b> to finish it.</li>) : (<li>You have another <b>{daysRemain}d {hoursRemain}h</b> to&nbsp;complete next module.</li>);
+
     return (
       <div className="window">
         <header><div className="logo" /><h2>{this.props.modules[0].course}</h2><div className="icons" /></header>
         <div className="info">
           <h1>My Progress</h1>
           <ul>
-            <li>You completed <b>7 of 24</b><br />lessons in Module 4</li>
-            <li>But you have another<br /><b>2d 12h</b> to finish it.</li>
-            <li>By the way, <b>{position}</b> students<br />are ahead you.</li>
+            {progressMessage}
+            {timeMessage}
+            {positionMessage}
           </ul>
         </div>
         <div ref="chart" className="chart">
@@ -215,17 +229,3 @@ class Modules extends React.Component {
 
   }
 }
-
-// set font to Roboto
-// fix X axis
-// fix Y axis
-// TODO: tune colors
-
-// code the rest of the page
-// add drag react component
-// stylize selectbox
-// count assumptions
-// TODO: test interactions ???
-// TODO: improve copyrighting
-// TODO: animations?
-

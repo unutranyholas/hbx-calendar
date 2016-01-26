@@ -20,7 +20,7 @@
     path {
       fill: none;
       stroke: color($students-color a(50%));
-      stroke-width: 1px;
+      stroke-width: 0.5px;
     }
     circle {
       fill: color($students-color a(50%));

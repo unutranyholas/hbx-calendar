@@ -13,9 +13,10 @@ export default class Selector extends React.Component {
     this.state = {
       student_n: props.students.indexOf(props.student_id),
       course_number: props.course_number,
-      date: props.date + 1000 * 60,
+      date: props.date,
       assumption: props.assumption
     };
+
     this.onSelectChange = this.onSelectChange.bind(this);
     this.onDateChange = this.onDateChange.bind(this);
     this.onStudentChange = this.onStudentChange.bind(this);
@@ -106,7 +107,7 @@ export default class Selector extends React.Component {
     return (
       <div className="selector">
         <h3>
-          Student {studentInput} would see the progess in {courseSelect} in {dateInput} this way:
+          Student {studentInput} would see the progress in {courseSelect} on {dateInput} this way:
         </h3>
         <p>(we assume that the effort of each module {assumptionSelect})</p>
       </div>
